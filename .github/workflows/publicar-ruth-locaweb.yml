@@ -31,13 +31,16 @@ jobs:
           FTP_HOST: ${{ secrets.HOST }}
           FTP_USER: ${{ secrets.USER }}
           FTP_PASS: ${{ secrets.PASS }}
+          RUTH_PASSWORD: ${{ secrets.AVALI_RUTH }}
         shell: bash
         run: |
           set -euo pipefail
           test -n "$FTP_HOST"
           test -n "$FTP_USER"
           test -n "$FTP_PASS"
+          test -n "$RUTH_PASSWORD"
           export LFTP_PASSWORD="$FTP_PASS"
+          php -r 'file_put_contents("/tmp/ruth-config.php", "<?php return ".var_export(password_hash(getenv("RUTH_PASSWORD"), PASSWORD_DEFAULT), true).";\\n");'
           lftp --env-password -u "$FTP_USER" "$FTP_HOST" <<'FTP'
           set cmd:fail-exit yes
           set net:max-retries 2
@@ -46,7 +49,8 @@ jobs:
           set ssl:verify-certificate yes
           cd /public_html/feedback
           mkdir -p avaliacoes/ruth
-          mirror -R --verbose --only-newer public/avaliacoes/ruth/ avaliacoes/ruth/
+          mirror -R -a --verbose --only-newer public/avaliacoes/ruth/ avaliacoes/ruth/
+          put -O avaliacoes/ruth/ /tmp/ruth-config.php -o .senha-config.php
           bye
           FTP
       - name: Testar URL pública
@@ -55,7 +59,7 @@ jobs:
           set -euo pipefail
           url="https://feedback.compassrosesystems.com.br/avaliacoes/ruth/"
           for n in 1 2 3; do
-            if curl -fsSL --max-time 20 "$url" | grep -q 'Portal da Ruth'; then
+            if curl -fsSL --max-time 20 "$url" | grep -q 'Área reservada da consultora'; then
               echo "Portal da Ruth publicado."
               exit 0
             fi
