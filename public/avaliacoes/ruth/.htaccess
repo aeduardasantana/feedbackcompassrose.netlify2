@@ -1,0 +1,5 @@
+Options -Indexes
+DirectoryIndex index.php
+<FilesMatch "^(index\.html|dados\.js|status\.html|final\.html|\.senha-config\.php)$">
+  Require all denied
+</FilesMatch>
