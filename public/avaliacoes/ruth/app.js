@@ -9,7 +9,7 @@
  const credit=c=>({disponivel:"Crédito disponível",a_confirmar:"Crédito a confirmar",atribuido:"Avaliação atribuída",utilizado:"Crédito utilizado"}[c]||"Reservado");
  const step=s=>({preparacao:"Aguardando preparação",pendente:"Pendente",enviada:"Enviada",andamento:"Em andamento",concluida:"Concluída"}[s]||"Em preparação");
  const tag=(t,cls="")=>'<span class="badge '+cls+'">'+enc(t)+'</span>';
- const route=(pg,c)=>"./"+pg+".html?avaliacao="+encodeURIComponent(c);
+ const route=(pg,c)=>pg==="formulario"?"./formulario.html?avaliacao="+encodeURIComponent(c):"./index.php?recurso="+(pg==="status"?"status.html":"final.html")+"&avaliacao="+encodeURIComponent(c);
  const view=document.body.getAttribute("data-page");
  if(view==="home"){
    el("nome").textContent=d.consultora;
