@@ -32,6 +32,7 @@ jobs:
           FTP_USER: ${{ secrets.USER }}
           FTP_PASS: ${{ secrets.PASS }}
           RUTH_PASSWORD: ${{ secrets.AVALI_RUTH }}
+          SYNC_TOKEN: ${{ secrets.RUTH_SYNC_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail
@@ -39,8 +40,10 @@ jobs:
           test -n "$FTP_USER"
           test -n "$FTP_PASS"
           test -n "$RUTH_PASSWORD"
+          test -n "$SYNC_TOKEN"
           export LFTP_PASSWORD="$FTP_PASS"
           php -r 'file_put_contents("/tmp/ruth-config.php", "<?php return ".var_export(password_hash(getenv("RUTH_PASSWORD"), PASSWORD_DEFAULT), true).";\n");'
+          php -r 'file_put_contents("/tmp/ruth-sync.php", "<?php return ".var_export(hash("sha256",getenv("SYNC_TOKEN")),true).";\n");'
           lftp --env-password -u "$FTP_USER" "$FTP_HOST" <<'FTP'
           set cmd:fail-exit yes
           set net:max-retries 2
@@ -52,11 +55,14 @@ jobs:
           cd ../..
           mirror -R -a --verbose public/avaliacoes/ruth/ avaliacoes/ruth/
           put /tmp/ruth-config.php -o avaliacoes/ruth/.senha-config.php
+          put /tmp/ruth-sync.php -o avaliacoes/ruth/.sync-config.php
+          get avaliacoes/ruth/.sync-config.php -o /tmp/sync-check.php
           get avaliacoes/ruth/.senha-config.php -o /tmp/ruth-check.php
           bye
           FTP
           cmp -s /tmp/ruth-config.php /tmp/ruth-check.php || { echo "::error::A configuração de senha não foi gravada corretamente na Locaweb."; exit 1; }
-          rm -f /tmp/ruth-check.php /tmp/ruth-config.php
+          cmp -s /tmp/ruth-sync.php /tmp/sync-check.php || { echo "::error::A configuração da sincronização não foi gravada corretamente."; exit 1; }
+          rm -f /tmp/ruth-check.php /tmp/ruth-config.php /tmp/ruth-sync.php /tmp/sync-check.php
       - name: Testar URL pública
         shell: bash
         run: |
