@@ -10,12 +10,17 @@
  const step=s=>({preparacao:"Aguardando preparação",pendente:"Pendente",enviada:"Enviada",andamento:"Em andamento",concluida:"Concluída"}[s]||"Em preparação");
  const tag=(t,cls="")=>'<span class="badge '+cls+'">'+enc(t)+'</span>';
  const route=(pg,c)=>pg==="formulario"?"./formulario.html?avaliacao="+encodeURIComponent(c):"./index.php?recurso="+(pg==="status"?"status.html":"final.html")+"&avaliacao="+encodeURIComponent(c);
+ const shareWhatsApp=a=>{
+   const page=new URL(route("formulario",a.codigo),location.href).href;
+   const message="Olá! Segue novamente o acesso para participar da Avaliação 360º de "+(a.avaliado||"seu avaliado")+".\n\nAcesse o formulário por este link:\n"+page+"\n\nSua participação é importante. Obrigado(a)!";
+   return "https://wa.me/?text="+encodeURIComponent(message);
+ };
  const view=document.body.getAttribute("data-page");
  if(view==="home"){
    el("nome").textContent=d.consultora;
    const metrics=[["Créditos disponíveis",d.creditosDisponiveis??"—"],["Avaliações registradas",d.totalAvaliacoes??d.avaliacoes.length],["Pendentes",d.avaliacoes.filter(a=>a.situacao==="pendente").length]];
    el("metrics").innerHTML=metrics.map(([t,n])=>'<div class="metric"><small>'+enc(t)+'</small><strong>'+n+'</strong></div>').join("");
-   el("list").innerHTML=d.avaliacoes.map(a=>'<article class="card"><div class="card-head"><div><div class="eyebrow">Avaliação '+enc(a.codigo)+'</div><h3>'+enc(a.avaliado||"Avaliado a definir")+'</h3><p class="muted">'+enc(d.empresa)+'</p></div><div class="badges">'+tag(credit(a.credito),a.credito==="a_confirmar"?"warn":"")+tag(step(a.situacao),"neutral")+'</div></div><div class="actions"><a class="btn" href="'+route("status",a.codigo)+'">Ver status →</a><a class="btn secondary" href="'+route("formulario",a.codigo)+'">Formulário ↗</a><a class="btn secondary" href="'+route("final",a.codigo)+'">Relatório final ↗</a></div></article>').join("");
+   el("list").innerHTML=d.avaliacoes.map(a=>'<article class="card"><div class="card-head"><div><div class="eyebrow">Avaliação '+enc(a.codigo)+'</div><h3>'+enc(a.avaliado||"Avaliado a definir")+'</h3><p class="muted">'+enc(d.empresa)+'</p></div><div class="badges">'+tag(credit(a.credito),a.credito==="a_confirmar"?"warn":"")+tag(step(a.situacao),"neutral")+'</div></div><div class="actions"><a class="btn" href="'+route("status",a.codigo)+'">Ver status →</a><a class="btn secondary" href="'+route("formulario",a.codigo)+'">Formulário ↗</a><a class="btn secondary share-whatsapp" target="_blank" rel="noopener noreferrer" href="'+shareWhatsApp(a)+'" aria-label="Reenviar formulário de '+enc(a.avaliado)+' pelo WhatsApp">Reenviar via WhatsApp ↗</a><a class="btn secondary" href="'+route("final",a.codigo)+'">Relatório final ↗</a></div></article>').join("");
  } else if(view==="form"){
    if(!entry){el("area").innerHTML='<div class="empty"><h2>Avaliação não encontrada</h2><p>Confirme o link recebido.</p></div>';return}
    el("codigo").textContent="Avaliação "+entry.codigo;
