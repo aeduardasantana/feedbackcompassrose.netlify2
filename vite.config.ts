@@ -3,18 +3,26 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 import tailwindcss from '@tailwindcss/vite'
-import netlify from '@netlify/vite-plugin-tanstack-start'
 
-const config = defineConfig({
+// Versão de homologação para hospedagem estática na Locaweb.
+// Preserva todas as rotas do frontend. As APIs /api/** exigem
+// migração e homologação separadas antes da troca do DNS.
+export default defineConfig({
   plugins: [
-    viteTsConfigPaths({
-      projects: ['./tsconfig.json'],
-    }),
+    viteTsConfigPaths({ projects: ['./tsconfig.json'] }),
     tailwindcss(),
-    netlify(),
-    tanstackStart(),
+    tanstackStart({
+      spa: { enabled: true },
+      prerender: {
+        enabled: true,
+        autoStaticPathsDiscovery: false,
+        crawlLinks: false,
+        failOnError: true,
+      },
+      pages: [
+        { path: '/', prerender: { enabled: true, outputPath: '/index.html' } },
+      ],
+    }),
     viteReact(),
   ],
 })
-
-export default config
