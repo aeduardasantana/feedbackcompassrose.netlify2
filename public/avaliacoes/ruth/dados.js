@@ -7,6 +7,7 @@ window.COMP_RUTH = {
   consultoria: "Loftier Consultoria em Desenvolvimento Humano e Empresarial",
   empresa: "Grupo Bemec",
   verificadoEm: "22/10/2026",
+  totalAvaliacoes: 25,
   creditosDisponiveis: 11, // Controle 026–036; atualização manual pelo administrativo
   avaliacoes: [
     {
