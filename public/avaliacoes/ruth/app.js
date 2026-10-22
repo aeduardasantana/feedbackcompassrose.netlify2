@@ -29,6 +29,14 @@
    frame.src=formEmbed;frame.loading="lazy";frame.referrerPolicy="no-referrer";
    frame.setAttribute("allow","clipboard-write");
    el("form-embed").append(frame);
+ } else if(view==="final"){
+   if(!entry){el("area").innerHTML='<div class="empty"><h2>Relatório indisponível</h2><p>Confirme o link da avaliação.</p></div>';return}
+   el("codigo").textContent="Avaliação "+entry.codigo;
+   el("avaliado").textContent=entry.avaliado||"";
+   const href=url(entry.relatorioFinal);
+   if(!href){el("area").innerHTML='<div class="empty"><h2>Relatório final em preparação</h2><p>O documento será disponibilizado aqui após a conclusão e a autorização da consultora.</p></div>';return}
+   el("area").innerHTML='<h2>Relatório final</h2><p>O documento permanece armazenado no Google Drive e respeita as permissões de acesso definidas pelo proprietário.</p><div class="actions"><a class="btn" id="final-link" target="_blank" rel="noopener noreferrer">Consultar relatório ↗</a></div>';
+   el("final-link").href=href;
  } else if(view==="status"){
    if(!entry){el("area").innerHTML='<div class="empty"><h2>Avaliação não encontrada</h2></div>';return}
    el("codigo").textContent="Avaliação "+entry.codigo+" · "+d.empresa;
