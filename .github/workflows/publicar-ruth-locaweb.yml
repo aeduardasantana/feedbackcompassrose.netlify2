@@ -50,9 +50,12 @@ jobs:
           cd /public_html/feedback
           mkdir -p avaliacoes/ruth
           mirror -R -a --verbose --only-newer public/avaliacoes/ruth/ avaliacoes/ruth/
-          put -O avaliacoes/ruth/ /tmp/ruth-config.php -o .senha-config.php
+          put /tmp/ruth-config.php -o avaliacoes/ruth/.senha-config.php
+          get avaliacoes/ruth/.senha-config.php -o /tmp/ruth-check.php
           bye
           FTP
+          cmp -s /tmp/ruth-config.php /tmp/ruth-check.php || { echo "::error::A configuração de senha não foi gravada corretamente na Locaweb."; exit 1; }
+          rm -f /tmp/ruth-check.php /tmp/ruth-config.php
       - name: Testar URL pública
         shell: bash
         run: |
