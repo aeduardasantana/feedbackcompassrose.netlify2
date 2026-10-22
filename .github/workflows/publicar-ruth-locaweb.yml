@@ -31,17 +31,13 @@ jobs:
           FTP_HOST: ${{ secrets.HOST }}
           FTP_USER: ${{ secrets.USER }}
           FTP_PASS: ${{ secrets.PASS }}
-          RUTH_PASSWORD: ${{ secrets.AVALI_RUTH }}
         shell: bash
         run: |
           set -euo pipefail
           test -n "$FTP_HOST"
           test -n "$FTP_USER"
           test -n "$FTP_PASS"
-          test -n "$RUTH_PASSWORD"
           export LFTP_PASSWORD="$FTP_PASS"
-          printf "ruth:%s\\n" "$(openssl passwd -apr1 "$RUTH_PASSWORD")" > /tmp/ruth.htpasswd
-          printf "AuthType Basic\\nAuthName \\"Acesso restrito Ruth\\"\\nAuthUserFile /public_html/feedback/.ruth.htpasswd\\nRequire valid-user\\n" > /tmp/ruth.htaccess
           lftp --env-password -u "$FTP_USER" "$FTP_HOST" <<'FTP'
           set cmd:fail-exit yes
           set net:max-retries 2
@@ -50,8 +46,6 @@ jobs:
           set ssl:verify-certificate yes
           cd /public_html/feedback
           mkdir -p avaliacoes/ruth
-          put -O /public_html/feedback/ /tmp/ruth.htpasswd
-          put -O /public_html/feedback/avaliacoes/ruth/ /tmp/ruth.htaccess
           mirror -R --verbose --only-newer public/avaliacoes/ruth/ avaliacoes/ruth/
           bye
           FTP
