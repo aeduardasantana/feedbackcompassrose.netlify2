@@ -1,0 +1,56 @@
+name: Homologacao da home na Locaweb
+
+on:
+  push:
+    branches:
+      - migracao-locaweb
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: feedback360-home-locaweb
+  cancel-in-progress: true
+
+jobs:
+  home:
+    name: Compilar, testar e publicar home
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obter codigo
+        uses: actions/checkout@v4
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Testar calculos
+        run: npm run test:tabulacao
+
+      - name: Gerar home estatica e frontend
+        run: npm run build
+
+      - name: Conferir arquivos antes do FTP
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s dist/client/index.html
+          test -s dist/client/_shell.html
+          test -d dist/client/assets
+          test -f dist/client/.htaccess
+          echo "Home e assets gerados; liberando transferencia FTP."
+
+      - name: Publicar home no diretorio isolado da Locaweb
+        uses: locaweb/ftp-deploy@1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          user: ${{ secrets.USER }}
+          password: ${{ secrets.PASS }}
+          localDir: "./dist/client/"
+          remoteDir: "./public_html/feedback/"
