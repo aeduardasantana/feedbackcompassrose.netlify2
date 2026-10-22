@@ -1,9 +1,6 @@
 name: Homologacao da home na Locaweb
 
 on:
-  push:
-    branches:
-      - migracao-locaweb
   workflow_dispatch:
 
 permissions:
