@@ -6,7 +6,7 @@
  const url=s=>{try{const u=new URL(s);return u.protocol==="https:"?u.href:""}catch{return""}};
  const code=new URLSearchParams(location.search).get("avaliacao");
  const entry=(d.avaliacoes||[]).find(a=>a.codigo===code);
- const credit=c=>({disponivel:"Crédito disponível",a_confirmar:"Crédito a confirmar",atribuido:"Avaliação atribuída",utilizado:"Crédito utilizado"}[c]||"Reservado");
+ const credit=c=>({disponivel:"Crédito disponível",a_confirmar:"Crédito a confirmar",atribuido:"Avaliação atribuída",utilizado:"Crédito utilizado"}[c]||"Crédito utilizado");
  const step=s=>({preparacao:"Aguardando preparação",pendente:"Pendente",enviada:"Enviada",andamento:"Em andamento",concluida:"Concluída"}[s]||"Em preparação");
  const tag=(t,cls="")=>'<span class="badge '+cls+'">'+enc(t)+'</span>';
  const route=(pg,c)=>pg==="formulario"?"./formulario.html?avaliacao="+encodeURIComponent(c):"./index.php?recurso="+(pg==="status"?"status.html":"final.html")+"&avaliacao="+encodeURIComponent(c);
@@ -22,8 +22,8 @@
    el("list").insertAdjacentHTML("beforebegin",'<div class="history-controls"><label for="filtro-situacao">Filtrar por situação</label><select id="filtro-situacao"><option value="">Todas</option><option value="concluida">Concluídas</option><option value="pendente">Pendentes</option><option value="andamento">Em andamento</option></select><input id="busca-avaliacao" type="search" placeholder="Buscar por nome, empresa ou código" aria-label="Buscar avaliações"></div>');
    const renderList=()=>{
      const status=el("filtro-situacao").value,search=el("busca-avaliacao").value.trim().toLocaleLowerCase("pt-BR");
-     const found=d.avaliacoes.filter(a=>(!status||a.situacao===status)&&(!search||[a.codigo,a.avaliado,a.empresa||d.empresa].join(" ").toLocaleLowerCase("pt-BR").includes(search)));
-     el("list").innerHTML=found.map(a=>'<article class="card"><div class="card-head"><div><div class="eyebrow">Avaliação '+enc(a.codigo)+'</div><h3>'+enc(a.avaliado||"Avaliado a definir")+'</h3><p class="muted">'+enc(a.empresa||d.empresa||"")+'</p></div><div class="badges">'+tag(credit(a.credito),a.credito==="a_confirmar"?"warn":"")+tag(step(a.situacao),"neutral")+'</div></div><div class="actions"><a class="btn" href="'+route("status",a.codigo)+'">Ver status →</a><a class="btn secondary" href="'+route("formulario",a.codigo)+'">Formulário ↗</a><button type="button" class="btn secondary copy-message" data-code="'+enc(a.codigo)+'" aria-label="Copiar mensagem da avaliação de '+enc(a.avaliado)+'">Copiar mensagem</button><a class="btn secondary" href="'+route("final",a.codigo)+'">Relatório final ↗</a></div></article>').join("")||'<p class="muted">Nenhuma avaliação corresponde aos filtros selecionados.</p>';
+     const found=d.avaliacoes.filter(a=>(!status||a.situacao===status)&&(!search||[a.codigo,a.avaliado,a.empresa||""].join(" ").toLocaleLowerCase("pt-BR").includes(search)));
+     el("list").innerHTML=found.map(a=>'<article class="card"><div class="card-head"><div><div class="eyebrow">Avaliação '+enc(a.codigo)+'</div><h3>'+enc(a.avaliado||"Avaliado a definir")+'</h3><p class="muted">'+enc(a.empresa||"Empresa não identificada no histórico")+'</p></div><div class="badges">'+tag(credit(a.credito),a.credito==="a_confirmar"?"warn":"")+tag(step(a.situacao),"neutral")+'</div></div><div class="actions"><a class="btn" href="'+route("status",a.codigo)+'">Ver status →</a><a class="btn secondary" href="'+route("formulario",a.codigo)+'">Formulário ↗</a><button type="button" class="btn secondary copy-message" data-code="'+enc(a.codigo)+'" aria-label="Copiar mensagem da avaliação de '+enc(a.avaliado)+'">Copiar mensagem</button><a class="btn secondary" href="'+route("final",a.codigo)+'">Relatório final ↗</a></div></article>').join("")||'<p class="muted">Nenhuma avaliação corresponde aos filtros selecionados.</p>';
    };
    el("list").addEventListener("click",async event=>{
       const button=event.target.closest(".copy-message");
