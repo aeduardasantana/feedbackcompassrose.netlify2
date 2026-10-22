@@ -1,0 +1,84 @@
+name: Publicar portal provisório Ruth na Locaweb
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'public/avaliacoes/ruth/**'
+      - '.github/workflows/publicar-ruth-locaweb.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publicar-ruth-locaweb
+  cancel-in-progress: false
+
+jobs:
+  enviar-html:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Obter somente o código do repositório
+        uses: actions/checkout@v4
+
+      - name: Conferir arquivos estáticos
+        shell: bash
+        run: |
+          set -euo pipefail
+          for arquivo in index.html formulario.html status.html app.js estilo.css dados.js; do
+            test -s "public/avaliacoes/ruth/$arquivo"
+          done
+          echo "Os seis arquivos do portal estão presentes."
+
+      - name: Instalar cliente FTP
+        shell: bash
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq lftp
+
+      - name: Publicar exclusivamente a pasta da Ruth
+        shell: bash
+        env:
+          FTP_HOST: ${{ secrets.HOST }}
+          FTP_USER: ${{ secrets.USER }}
+          FTP_PASS: ${{ secrets.PASS }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$FTP_HOST" || -z "$FTP_USER" || -z "$FTP_PASS" ]]; then
+            echo "::error::Configure HOST, USER e PASS nos segredos do repositório."
+            exit 1
+          fi
+
+          # Senha lida do ambiente, não incluída no código nem nos argumentos.
+          export LFTP_PASSWORD="$FTP_PASS"
+
+          # Só publica se a pasta do subdomínio já existir no FTP.
+          # Nunca modifica o index do site principal ou outras aplicações.
+          lftp --env-password -u "$FTP_USER" "$FTP_HOST" <<'FTP'
+          set cmd:fail-exit yes
+          set net:max-retries 2
+          set net:timeout 20
+          set ftp:ssl-allow yes
+          set ssl:verify-certificate yes
+          cd /public_html/feedback
+          mkdir -p avaliacoes/ruth
+          mirror --reverse --verbose --only-newer public/avaliacoes/ruth/ avaliacoes/ruth/
+          bye
+          FTP
+
+      - name: Conferir resposta HTTP da Locaweb
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://feedback.compassrosesystems.com.br/avaliacoes/ruth/"
+          for tentativa in 1 2 3 4; do
+            if curl -fsS -L --max-time 20 "$URL" -o /tmp/ruth.html && grep -q 'Grupo Bemec' /tmp/ruth.html; then
+              echo "Portal da Ruth publicado e conteúdo da página inicial verificado."
+              exit 0
+            fi
+            sleep 6
+          done
+          echo "::error::Não foi possível confirmar a página no domínio. Conferir FTP e diretório raiz."
+          exit 1
