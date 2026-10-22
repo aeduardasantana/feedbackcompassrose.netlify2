@@ -31,6 +31,19 @@ if (!array_key_exists($recurso, $permitidos)) { http_response_code(404); exit; }
 header('Content-Type: '.$permitidos[$recurso]);
 $html = file_get_contents(__DIR__ . '/' . $recurso);
 if ($html === false) { http_response_code(404); exit; }
+if ($recurso === 'dados.js') {
+  $historyFile = __DIR__ . '/historico-privado.php';
+  if (is_file($historyFile)) {
+    $historic = require $historyFile;
+    if (is_array($historic) && isset($historic['avaliacoes']) && is_array($historic['avaliacoes'])) {
+      header('Content-Type: application/javascript; charset=utf-8');
+      echo 'window.COMP_RUTH=' . json_encode($historic, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) . ';';
+      exit;
+    }
+  }
+  http_response_code(503);
+  exit('Historico privado ainda nao instalado na hospedagem.');
+}
 if ($recurso === 'index.html') {
   $html = str_replace('src="./dados.js"', 'src="./index.php?recurso=dados.js"', $html);
   $html = str_replace('href="./estilo.css"', 'href="./estilo.css"', $html);
