@@ -89,6 +89,7 @@ function RelatorioStatus() {
             Abrir relatório operacional <ArrowUpRight className="h-4 w-4" />
           </a>
           <p className="mt-3 text-xs text-[#668077]">O relatório publicado pode ser consultado sem acesso às respostas individuais.</p>
+          {/\/spreadsheets\/d\/e\/.*\/pubhtml/i.test(item.link_status_externo) && <iframe title={"Relatório de status " + item.codigo} src={item.link_status_externo} loading="lazy" referrerPolicy="no-referrer" className="mt-5 h-[680px] w-full rounded-xl border border-[#173f3a]/10 bg-white" />}
         </div> : <div className="mt-5 flex items-start gap-3 rounded-xl bg-[#f5f4ef] p-4 text-sm text-[#668077]">
           <FileText className="h-5 w-5 shrink-0" /> O relatório externo de status ainda não foi vinculado.
         </div>}
