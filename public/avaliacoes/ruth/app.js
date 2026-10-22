@@ -19,15 +19,15 @@
  } else if(view==="form"){
    if(!entry){el("area").innerHTML='<div class="empty"><h2>Avaliação não encontrada</h2><p>Confirme o link recebido.</p></div>';return}
    el("codigo").textContent="Avaliação "+entry.codigo;
+   el("avaliado").textContent=entry.avaliado||"Avaliado não identificado";
    const href=url(entry.formulario);
-   if(!href){el("area").innerHTML='<div class="empty"><h2>Formulário em preparação</h2><p>Esta avaliação ainda não está liberada para preenchimento. Confirme com a consultora.</p></div>';return}
-   const formEmbed=entry.incorporacao || href;
-   el("area").innerHTML='<h2>Formulário de avaliação</h2><p class="muted">Responda diretamente no formulário do Google abaixo. Caso não carregue, utilize o acesso alternativo.</p><div class="actions"><a class="btn secondary" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" id="link">Abrir no Google Forms ↗</a></div><div id="form-embed"></div>';
+   if(!href){el("area").innerHTML='<div class="empty"><h2>Formulário indisponível</h2><p>Confirme o acesso com a consultora.</p></div>';return}
+   const frameSrc=url(entry.incorporacao)||href;
+   el("area").innerHTML='<h2>Formulário de avaliação</h2><p class="muted">Preencha o formulário abaixo. Suas respostas são registradas diretamente no Google Forms.</p><div id="form-embed"></div><div class="form-alternative"><p>Se o formulário não carregar, utilize o acesso externo:</p><a class="btn secondary" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" id="link">Abrir formulário no Google ↗</a></div>';
    el("link").href=href;
    const frame=document.createElement("iframe");
-   frame.className="embed";frame.title="Formulário Google da avaliação "+entry.codigo;
-   frame.src=formEmbed;frame.loading="lazy";frame.referrerPolicy="strict-origin-when-cross-origin";
-   frame.setAttribute("allow","clipboard-write");
+   frame.className="embed embed-form";frame.title="Formulário Google para avaliação de "+(entry.avaliado||entry.codigo);
+   frame.src=frameSrc;frame.loading="eager";frame.referrerPolicy="strict-origin-when-cross-origin";
    el("form-embed").append(frame);
  } else if(view==="final"){
    if(!entry){el("area").innerHTML='<div class="empty"><h2>Relatório indisponível</h2><p>Confirme o link da avaliação.</p></div>';return}
