@@ -40,7 +40,7 @@ jobs:
           test -n "$FTP_PASS"
           test -n "$RUTH_PASSWORD"
           export LFTP_PASSWORD="$FTP_PASS"
-          php -r 'file_put_contents("/tmp/ruth-config.php", "<?php return ".var_export(password_hash(getenv("RUTH_PASSWORD"), PASSWORD_DEFAULT), true).";\\n");'
+          php -r 'file_put_contents("/tmp/ruth-config.php", "<?php return ".var_export(password_hash(getenv("RUTH_PASSWORD"), PASSWORD_DEFAULT), true).";\n");'
           lftp --env-password -u "$FTP_USER" "$FTP_HOST" <<'FTP'
           set cmd:fail-exit yes
           set net:max-retries 2
