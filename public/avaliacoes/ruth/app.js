@@ -80,14 +80,14 @@
    el("area").innerHTML='<section class="card section"><h2>Andamento</h2><div class="badges">'+tag(credit(entry.credito),entry.credito==="a_confirmar"?"warn":"")+tag(step(entry.situacao),"neutral")+'</div><div class="stats-row"><div class="value"><small>Situação</small><strong>'+enc(step(entry.situacao))+'</strong></div><div class="value"><small>Status das respostas</small><strong>'+enc(step(entry.statusRespostas||entry.respostasSituacao||entry.situacao))+'</strong></div></div><p class="muted">Controle provisório, atualizado manualmente. Respostas individuais não são exibidas.</p></section><section class="card section"><h2>Relatório de status</h2><div id="report"></div></section>';
    const href=url(entry.status);
    if(!href){el("report").innerHTML='<div class="empty"><h3>Relatório em preparação</h3><p>O link da planilha de status desta avaliação ainda não foi vinculado.</p></div>';return}
-   el("report").innerHTML='<div class="actions"><a class="btn" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" id="report-link">Abrir status ↗</a></div>';
+   el("report").innerHTML='<div id="status-embed"></div><details class="form-help"><summary>Problemas para visualizar o relatório?</summary><p>Se o relatório não carregar corretamente, consulte a versão original.</p><a class="fallback-link" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" id="report-link">Abrir relatório original em outra aba ↗</a></details>';
    el("report-link").href=href;
    const link=new URL(href);
    if(link.hostname==="docs.google.com" && link.pathname.includes("/spreadsheets/") && link.pathname.includes("/pubhtml")){
      const frame=document.createElement("iframe");
      frame.className="embed";frame.title="Relatório de status "+entry.codigo;
      frame.src=href;frame.loading="lazy";frame.referrerPolicy="no-referrer";
-     el("report").append(frame);
+     el("status-embed").append(frame);
    }
  }
 })();
