@@ -1,0 +1,9 @@
+# Feedback Compass Rose - hospedagem Locaweb (SPA)
+# Evitar que requisições de API recebam HTML por engano.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^api/ - [R=404,L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ _shell.html [L]
+</IfModule>
