@@ -44,3 +44,9 @@ body[data-page="form"] .embed-form{height:760px!important;min-height:0!important
 /* Ajuste solicitado: iframe 50% mais alto, sem alterar largura */
 body[data-page="form"] .embed-form{height:1140px!important;min-height:0!important;max-height:none!important}
 @media(max-width:680px){body[data-page="form"] .embed-form{height:1095px!important;min-height:0!important}}
+
+/* Relatórios de status: área de leitura 20% mais larga (920 -> 1104px), altura adaptável à tela */
+body[data-page="status"] .container{width:min(1104px,calc(100% - 32px));max-width:none}
+body[data-page="status"] .embed{display:block;width:100%;height:clamp(680px,88dvh,1100px);max-height:none;border-radius:10px}
+body[data-page="status"] #report{min-width:0}
+@media(max-width:680px){body[data-page="status"] .container{width:calc(100% - 20px)}body[data-page="status"] .embed{height:84dvh;min-height:610px}body[data-page="status"] .card{padding:12px}}
