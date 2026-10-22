@@ -26,7 +26,7 @@ function Metric({ rotulo, valor, detalhe }: { rotulo: string; valor: number; det
 
 function Item({ item, token }: { item: AvaliacaoPortal; token: string }) {
   const formUrl = "/formulario/" + encodeURIComponent(item.formulario_token);
-  const statusUrl = "/cliente/" + encodeURIComponent(token) + "/status/" + encodeURIComponent(item.codigo);
+  const statusUrl = "/status/" + encodeURIComponent(token) + "/" + encodeURIComponent(item.codigo);
   const ready = Boolean(item.link_formulario_externo) && item.situacao_credito !== "pendente_confirmacao";
   return <article className="rounded-[1.5rem] border border-[#173f3a]/10 bg-white p-5 shadow-sm sm:p-6">
     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
