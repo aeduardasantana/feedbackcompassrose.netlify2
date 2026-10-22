@@ -49,7 +49,7 @@ jobs:
           set ssl:verify-certificate yes
           cd /public_html/feedback
           mkdir -p avaliacoes/ruth
-          mirror -R -a --verbose --only-newer public/avaliacoes/ruth/ avaliacoes/ruth/
+          mirror -R -a --verbose public/avaliacoes/ruth/ avaliacoes/ruth/
           put /tmp/ruth-config.php -o avaliacoes/ruth/.senha-config.php
           get avaliacoes/ruth/.senha-config.php -o /tmp/ruth-check.php
           bye
