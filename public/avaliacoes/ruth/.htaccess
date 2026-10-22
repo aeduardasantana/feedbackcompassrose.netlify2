@@ -1,5 +1,5 @@
 Options -Indexes
 DirectoryIndex index.php
-<FilesMatch "^(index\.html|dados\.js|status\.html|final\.html|historico-privado\.php|\.senha-config\.php)$">
+<FilesMatch "^(index\.html|dados\.js|status\.html|final\.html|historico-privado\.php|\.sync-config\.php|\.senha-config\.php)$">
   Require all denied
 </FilesMatch>
