@@ -1,0 +1,65 @@
+name: Publicar Ruth na Locaweb
+on:
+  push:
+    branches: [main]
+    paths:
+      - "public/avaliacoes/ruth/**"
+      - ".github/workflows/publicar-ruth-locaweb.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: publicar-ruth-locaweb
+  cancel-in-progress: false
+jobs:
+  enviar-html:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verificar HTML
+        run: |
+          test -s public/avaliacoes/ruth/index.html
+          test -s public/avaliacoes/ruth/app.js
+          test -s public/avaliacoes/ruth/dados.js
+      - name: Instalar FTP
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq lftp
+      - name: Publicar somente páginas da Ruth
+        env:
+          FTP_HOST: ${{ secrets.HOST }}
+          FTP_USER: ${{ secrets.USER }}
+          FTP_PASS: ${{ secrets.PASS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$FTP_HOST"
+          test -n "$FTP_USER"
+          test -n "$FTP_PASS"
+          export LFTP_PASSWORD="$FTP_PASS"
+          lftp --env-password -u "$FTP_USER" "$FTP_HOST" <<'FTP'
+          set cmd:fail-exit yes
+          set net:max-retries 2
+          set net:timeout 20
+          set ftp:ssl-allow yes
+          set ssl:verify-certificate yes
+          cd /public_html/feedback
+          mkdir -p avaliacoes/ruth
+          mirror -R --verbose --only-newer public/avaliacoes/ruth/ avaliacoes/ruth/
+          bye
+          FTP
+      - name: Testar URL pública
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://feedback.compassrosesystems.com.br/avaliacoes/ruth/"
+          for n in 1 2 3; do
+            if curl -fsSL --max-time 20 "$url" | grep -q 'Portal da Ruth'; then
+              echo "Portal da Ruth publicado."
+              exit 0
+            fi
+            sleep 7
+          done
+          echo "::error::Upload executado, mas URL não confirmou o HTML esperado."
+          exit 1
