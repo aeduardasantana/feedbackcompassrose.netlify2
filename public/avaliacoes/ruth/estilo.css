@@ -18,3 +18,18 @@ h3{font-size:19px}
 
 /* Formulário individual: leitura confortável e acesso externo apenas no fim */
 body[data-page='form'] .hero{padding:22px 26px}body[data-page='form'] .identity{font-size:21px;font-weight:700;margin-top:12px;padding-top:12px}body[data-page='form'] #area{margin-top:15px}body[data-page='form'] .embed-form{height:920px;max-height:none;margin-top:12px;background:white}.form-alternative{margin-top:18px;padding:18px 0 2px;border-top:1px solid var(--line);text-align:center}.form-alternative p{font-size:13px;color:var(--muted);margin-bottom:10px}@media(max-width:680px){body[data-page='form'] .embed-form{height:85vh;min-height:700px}body[data-page='form'] .identity{font-size:19px}}
+
+/* Contingência discreta e navegação focada no preenchimento */
+body[data-page="form"] .container{width:min(1000px,calc(100% - 28px))}
+body[data-page="form"] .main{padding-top:18px}
+body[data-page="form"] #area{padding:15px}
+body[data-page="form"] .hero{padding:17px 22px}
+body[data-page="form"] .hero h1{font-size:22px;margin:4px 0}
+body[data-page="form"] .identity{margin-top:8px;padding-top:8px;font-size:18px}
+body[data-page="form"] .embed-form{display:block;width:100%;height:1100px;max-height:none;min-height:750px;border-radius:8px}
+body[data-page="form"] .form-help{margin-top:16px;border-top:1px solid var(--line);padding:14px 3px 1px;color:var(--muted);font-size:12px}
+body[data-page="form"] .form-help summary{cursor:pointer;display:list-item;width:max-content;max-width:100%;font-size:12px;font-weight:500;color:#667c74}
+body[data-page="form"] .form-help summary:hover{text-decoration:underline}
+body[data-page="form"] .form-help p{margin:10px 0 4px;font-size:12px}
+body[data-page="form"] .fallback-link{font-size:12px;color:#37665c;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:680px){body[data-page="form"] #area{padding:10px}body[data-page="form"] .embed-form{height:88vh;min-height:690px}body[data-page="form"] .hero{padding:15px 18px}}
