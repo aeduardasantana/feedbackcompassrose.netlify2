@@ -13,9 +13,9 @@
  const view=document.body.getAttribute("data-page");
  if(view==="home"){
    el("nome").textContent=d.consultora;
-   const metrics=[["Créditos disponíveis",d.creditosDisponiveis??"—"],["Avaliações em andamento",d.avaliacoes.length],["Pendentes",d.avaliacoes.filter(a=>a.situacao==="pendente").length]];
+   const metrics=[["Créditos disponíveis",d.creditosDisponiveis??"—"],["Avaliações",d.avaliacoes.length],["Pendentes",d.avaliacoes.filter(a=>a.situacao==="pendente").length]];
    el("metrics").innerHTML=metrics.map(([t,n])=>'<div class="metric"><small>'+enc(t)+'</small><strong>'+n+'</strong></div>').join("");
-   el("list").innerHTML=d.avaliacoes.map(a=>'<article class="card"><div class="card-head"><div><div class="eyebrow">Avaliação '+enc(a.codigo)+'</div><h3>'+enc(a.avaliado||"Avaliado a definir")+'</h3><p class="muted">'+enc(d.empresa)+'</p></div><div class="badges">'+tag(credit(a.credito),a.credito==="a_confirmar"?"warn":"")+tag(step(a.situacao),"neutral")+'</div></div><div class="actions"><a class="btn" href="'+route("status",a.codigo)+'">Ver status →</a><a class="btn secondary" href="'+route("formulario",a.codigo)+'">Página do formulário →</a></div></article>').join("");
+   el("list").innerHTML=d.avaliacoes.map(a=>'<article class="card"><div class="card-head"><div><div class="eyebrow">Avaliação '+enc(a.codigo)+'</div><h3>'+enc(a.avaliado||"Avaliado a definir")+'</h3><p class="muted">'+enc(d.empresa)+'</p></div><div class="badges">'+tag(credit(a.credito),a.credito==="a_confirmar"?"warn":"")+tag(step(a.situacao),"neutral")+'</div></div><div class="actions"><a class="btn" href="'+route("status",a.codigo)+'">Ver status →</a><a class="btn secondary" href="'+route("formulario",a.codigo)+'">Formulário ↗</a><a class="btn secondary" href="'+route("final",a.codigo)+'">Relatório final ↗</a></div></article>').join("");
  } else if(view==="form"){
    if(!entry){el("area").innerHTML='<div class="empty"><h2>Avaliação não encontrada</h2><p>Confirme o link recebido.</p></div>';return}
    el("codigo").textContent="Avaliação "+entry.codigo+" · "+d.empresa;
