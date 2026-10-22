@@ -6,21 +6,21 @@
  const url=s=>{try{const u=new URL(s);return u.protocol==="https:"?u.href:""}catch{return""}};
  const code=new URLSearchParams(location.search).get("avaliacao");
  const entry=d.avaliacoes.find(a=>a.codigo===code);
- const credit=c=>({disponivel:"Crédito disponível",a_confirmar:"Crédito a confirmar",utilizado:"Crédito utilizado"}[c]||"Reservado");
- const step=s=>({preparacao:"Aguardando preparação",enviada:"Enviada",andamento:"Em andamento",concluida:"Concluída"}[s]||"Em preparação");
+ const credit=c=>({disponivel:"Crédito disponível",a_confirmar:"Crédito a confirmar",atribuido:"Avaliação atribuída",utilizado:"Crédito utilizado"}[c]||"Reservado");
+ const step=s=>({preparacao:"Aguardando preparação",pendente:"Pendente",enviada:"Enviada",andamento:"Em andamento",concluida:"Concluída"}[s]||"Em preparação");
  const tag=(t,cls="")=>'<span class="badge '+cls+'">'+enc(t)+'</span>';
  const route=(pg,c)=>"./"+pg+".html?avaliacao="+encodeURIComponent(c);
  const view=document.body.getAttribute("data-page");
  if(view==="home"){
    el("nome").textContent=d.consultora;
-   const metrics=[["Créditos disponíveis",d.avaliacoes.filter(a=>a.credito==="disponivel").length],["A confirmar",d.avaliacoes.filter(a=>a.credito==="a_confirmar").length],["Avaliações",d.avaliacoes.length]];
+   const metrics=[["Avaliações atribuídas",d.avaliacoes.length],["Pendentes",d.avaliacoes.filter(a=>a.situacao==="pendente").length],["Concluídas",d.avaliacoes.filter(a=>a.situacao==="concluida").length]];
    el("metrics").innerHTML=metrics.map(([t,n])=>'<div class="metric"><small>'+enc(t)+'</small><strong>'+n+'</strong></div>').join("");
    el("list").innerHTML=d.avaliacoes.map(a=>'<article class="card"><div class="card-head"><div><div class="eyebrow">Avaliação '+enc(a.codigo)+'</div><h3>'+enc(a.avaliado||"Avaliado a definir")+'</h3><p class="muted">'+enc(d.empresa)+'</p></div><div class="badges">'+tag(credit(a.credito),a.credito==="a_confirmar"?"warn":"")+tag(step(a.situacao),"neutral")+'</div></div><div class="actions"><a class="btn" href="'+route("status",a.codigo)+'">Ver status →</a><a class="btn secondary" href="'+route("formulario",a.codigo)+'">Página do formulário →</a></div></article>').join("");
  } else if(view==="form"){
    if(!entry){el("area").innerHTML='<div class="empty"><h2>Avaliação não encontrada</h2><p>Confirme o link recebido.</p></div>';return}
    el("codigo").textContent="Avaliação "+entry.codigo+" · "+d.empresa;
    const href=url(entry.formulario);
-   if(!href||entry.credito==="a_confirmar"){el("area").innerHTML='<div class="empty"><h2>Formulário em preparação</h2><p>Esta avaliação ainda não está liberada para preenchimento. Confirme com a consultora.</p></div>';return}
+   if(!href){el("area").innerHTML='<div class="empty"><h2>Formulário em preparação</h2><p>Esta avaliação ainda não está liberada para preenchimento. Confirme com a consultora.</p></div>';return}
    el("area").innerHTML='<h2>Formulário de avaliação</h2><p class="muted">Abra o formulário oficial para participar.</p><div class="actions"><a class="btn" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" id="link">Abrir formulário ↗</a></div>';
    el("link").href=href;
  } else if(view==="status"){
@@ -34,5 +34,12 @@
    if(!href){el("report").innerHTML='<div class="empty"><h3>Relatório em preparação</h3><p>O link da planilha de status desta avaliação ainda não foi vinculado.</p></div>';return}
    el("report").innerHTML='<div class="actions"><a class="btn" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" id="report-link">Abrir status ↗</a></div>';
    el("report-link").href=href;
+   const link=new URL(href);
+   if(link.hostname==="docs.google.com" && link.pathname.includes("/spreadsheets/") && link.pathname.includes("/pubhtml")){
+     const frame=document.createElement("iframe");
+     frame.className="embed";frame.title="Relatório de status "+entry.codigo;
+     frame.src=href;frame.loading="lazy";frame.referrerPolicy="no-referrer";
+     el("report").append(frame);
+   }
  }
 })();
