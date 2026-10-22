@@ -19,11 +19,11 @@
  } else if(view==="form"){
    if(!entry){el("area").innerHTML='<div class="empty"><h2>Avaliação não encontrada</h2><p>Confirme o link recebido.</p></div>';return}
    el("codigo").textContent="Avaliação "+entry.codigo;
-   el("avaliado").textContent=entry.avaliado||"Avaliado não identificado";
+   el("avaliado").textContent=entry.avaliado||"Pessoa avaliada";
    const href=url(entry.formulario);
    if(!href){el("area").innerHTML='<div class="empty"><h2>Formulário indisponível</h2><p>Confirme o acesso com a consultora.</p></div>';return}
    const frameSrc=url(entry.incorporacao)||href;
-   el("area").innerHTML='<h2>Formulário de avaliação</h2><p class="muted">Preencha o formulário abaixo. Suas respostas são registradas diretamente no Google Forms.</p><div id="form-embed"></div><div class="form-alternative"><p>Se o formulário não carregar, utilize o acesso externo:</p><a class="btn secondary" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" id="link">Abrir formulário no Google ↗</a></div>';
+   el("area").innerHTML='<h2>Formulário de avaliação</h2><p class="muted">Preencha o formulário abaixo. Suas respostas são registradas diretamente no Google Forms.</p><div id="form-embed"></div><details class="form-help"><summary>Problemas para visualizar ou responder?</summary><p>Se o formulário não carregar ou apresentar um erro, abra a versão original no Google Forms.</p><a class="fallback-link" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" id="link">Abrir versão original em outra aba ↗</a></details>';
    el("link").href=href;
    const frame=document.createElement("iframe");
    frame.className="embed embed-form";frame.title="Formulário Google para avaliação de "+(entry.avaliado||entry.codigo);
