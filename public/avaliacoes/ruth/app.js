@@ -19,7 +19,7 @@
    el("nome").textContent=d.consultora;
    const metrics=[["Créditos disponíveis",d.creditosDisponiveis??"—"],["Avaliações registradas",d.totalAvaliacoes??d.avaliacoes.length],["Pendentes",d.avaliacoes.filter(a=>a.situacao==="pendente").length]];
    el("metrics").innerHTML=metrics.map(([t,n])=>'<div class="metric"><small>'+enc(t)+'</small><strong>'+n+'</strong></div>').join("");
-   el("list").insertAdjacentHTML("beforebegin",'<div class="history-controls"><label for="filtro-situacao">Filtrar por situação</label><select id="filtro-situacao"><option value="">Todas</option><option value="concluida">Concluídas</option><option value="pendente">Pendentes</option><option value="andamento">Em andamento</option></select><input id="busca-avaliacao" type="search" placeholder="Buscar por nome, empresa ou código" aria-label="Buscar avaliações"></div>');
+   el("list").insertAdjacentHTML("beforebegin",'<div class="history-controls"><label for="filtro-situacao">Filtrar por situação</label><select id="filtro-situacao"><option value="">Todas</option><option value="concluida">Concluídas</option><option value="pendente">Pendentes</option><option value="andamento">Em andamento</option></select><input id="busca-avaliacao" type="search" placeholder="Buscar por nome, empresa ou código" aria-label="Buscar avaliações"><button type="button" id="aplicar-filtros" class="btn">Buscar</button><button type="button" id="limpar-filtros" class="btn secondary">Limpar filtros</button></div>');
    const renderList=()=>{
      const status=el("filtro-situacao").value,search=el("busca-avaliacao").value.trim().toLocaleLowerCase("pt-BR");
      const found=d.avaliacoes.filter(a=>(!status||a.situacao===status)&&(!search||[a.codigo,a.avaliado,a.empresa||""].join(" ").toLocaleLowerCase("pt-BR").includes(search)));
@@ -45,8 +45,10 @@
         setTimeout(()=>{if(button.isConnected)button.textContent="Copiar mensagem"},2500);
       }
    });
+   el("aplicar-filtros").addEventListener("click",renderList);
    el("filtro-situacao").addEventListener("change",renderList);
-   el("busca-avaliacao").addEventListener("input",renderList);
+   el("busca-avaliacao").addEventListener("keydown",event=>{if(event.key==="Enter"){event.preventDefault();renderList()}});
+   el("limpar-filtros").addEventListener("click",()=>{el("filtro-situacao").value="";el("busca-avaliacao").value="";renderList()});
    renderList();
  } else if(view==="form"){
    if(!entry){el("area").innerHTML='<div class="empty"><h2>Avaliação não encontrada</h2><p>Confirme o link recebido.</p></div>';return}
