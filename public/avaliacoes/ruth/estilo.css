@@ -53,3 +53,7 @@ body[data-page="status"] #report{min-width:0}
 
 /* Botões explícitos de pesquisa e limpeza, sem recarregamento */
 .history-controls #aplicar-filtros,.history-controls #limpar-filtros{min-height:37px;padding:8px 14px;white-space:nowrap;cursor:pointer}.history-controls #limpar-filtros{font-weight:600}
+
+/* Relatórios de status: altura ampliada em 100% */
+body[data-page="status"] .embed{height:clamp(1360px,176dvh,2200px);max-height:none}
+@media(max-width:680px){body[data-page="status"] .embed{height:168dvh;min-height:1220px;max-height:none}}
