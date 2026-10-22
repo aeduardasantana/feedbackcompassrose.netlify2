@@ -40,3 +40,7 @@ body[data-page="form"] .fallback-link{font-size:12px;color:#37665c;text-decorati
 /* Formulário incorporado: dimensão equilibrada sem área vazia excessiva */
 body[data-page="form"] .embed-form{height:760px!important;min-height:0!important;max-height:none!important;width:100%;display:block}
 @media(max-width:680px){body[data-page="form"] .embed-form{height:730px!important;min-height:0!important}}
+
+/* Ajuste solicitado: iframe 50% mais alto, sem alterar largura */
+body[data-page="form"] .embed-form{height:1140px!important;min-height:0!important;max-height:none!important}
+@media(max-width:680px){body[data-page="form"] .embed-form{height:1095px!important;min-height:0!important}}
