@@ -15,3 +15,6 @@ h3{font-size:19px}
 .btn{padding:7px 13px;font-size:12px}
 .embed{max-height:650px}
 @media(max-width:680px){.hero{padding:20px}.metric{padding:12px 8px}.metric strong{font-size:25px}.embed{height:75vh}}
+
+/* Formulário individual: leitura confortável e acesso externo apenas no fim */
+body[data-page='form'] .hero{padding:22px 26px}body[data-page='form'] .identity{font-size:21px;font-weight:700;margin-top:12px;padding-top:12px}body[data-page='form'] #area{margin-top:15px}body[data-page='form'] .embed-form{height:920px;max-height:none;margin-top:12px;background:white}.form-alternative{margin-top:18px;padding:18px 0 2px;border-top:1px solid var(--line);text-align:center}.form-alternative p{font-size:13px;color:var(--muted);margin-bottom:10px}@media(max-width:680px){body[data-page='form'] .embed-form{height:85vh;min-height:700px}body[data-page='form'] .identity{font-size:19px}}
