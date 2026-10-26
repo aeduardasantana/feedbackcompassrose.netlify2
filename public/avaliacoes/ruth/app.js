@@ -9,7 +9,7 @@
  const credit=c=>({disponivel:"Crédito disponível",a_confirmar:"Crédito a confirmar",atribuido:"Avaliação atribuída",utilizado:"Crédito utilizado"}[c]||"Crédito utilizado");
  const step=s=>({preparacao:"Aguardando preparação",pendente:"Pendente",enviada:"Enviada",andamento:"Em andamento",concluida:"Concluída"}[s]||"Em preparação");
  const tag=(t,cls="")=>'<span class="badge '+cls+'">'+enc(t)+'</span>';
- const route=(pg,c)=>pg==="formulario"?"./formulario.html?avaliacao="+encodeURIComponent(c):"./index.php?recurso="+(pg==="status"?"status.html":"final.html")+"&avaliacao="+encodeURIComponent(c);
+ const route=(pg,c)=>pg==="formulario"?"./formulario.html?avaliacao="+encodeURIComponent(c):pg==="status"?"./status-publico.php?avaliacao="+encodeURIComponent(c):"./index.php?recurso=final.html&avaliacao="+encodeURIComponent(c);
  const messageFor=a=>{
    const page=new URL(route("formulario",a.codigo),location.href).href;
    return "Olá! Conforme solicitado, segue o acesso para participar da Avaliação 360º de "+(a.avaliado||"seu avaliado")+".\n\nAcesse o formulário por este link:\n"+page+"\n\nAgradecemos sua participação!";
