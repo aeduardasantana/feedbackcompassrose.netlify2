@@ -14,6 +14,10 @@
    const page=new URL(route("formulario",a.codigo),location.href).href;
    return "Olá! Conforme solicitado, segue o acesso para participar da Avaliação 360º de "+(a.avaliado||"seu avaliado")+".\n\nAcesse o formulário por este link:\n"+page+"\n\nAgradecemos sua participação!";
  };
+ const statusMessageFor=a=>{
+   const page=new URL(route("status",a.codigo),location.href).href;
+   return "Olá! Conforme solicitado, compartilhamos o link de acompanhamento do preenchimento da Avaliação 360º de "+(a.avaliado||"seu colaborador")+".\n\nAcompanhe a situação das respostas por este endereço:\n"+page+"\n\nAgradecemos sua participação!";
+ };
  const view=document.body.getAttribute("data-page");
  if(view==="home"){
    el("nome").textContent=d.consultora;
@@ -23,18 +27,20 @@
    const renderList=()=>{
      const status=el("filtro-situacao").value,search=el("busca-avaliacao").value.trim().toLocaleLowerCase("pt-BR");
      const found=d.avaliacoes.filter(a=>(!status||a.situacao===status)&&(!search||[a.codigo,a.avaliado,a.empresa||""].join(" ").toLocaleLowerCase("pt-BR").includes(search)));
-     el("list").innerHTML=found.map(a=>'<article class="card"><div class="card-head"><div><div class="eyebrow">Avaliação '+enc(a.codigo)+'</div><h3>'+enc(a.avaliado||"Avaliado a definir")+'</h3><p class="muted">'+enc(a.empresa||"Empresa não identificada no histórico")+'</p></div><div class="badges">'+tag(credit(a.credito),a.credito==="a_confirmar"?"warn":"")+tag(step(a.situacao),"neutral")+'</div></div><div class="actions"><a class="btn" href="'+route("status",a.codigo)+'">Ver status →</a><a class="btn secondary" href="'+route("formulario",a.codigo)+'">Formulário ↗</a><button type="button" class="btn secondary copy-message" data-code="'+enc(a.codigo)+'" aria-label="Copiar mensagem da avaliação de '+enc(a.avaliado)+'">Copiar mensagem</button><a class="btn secondary" href="'+route("final",a.codigo)+'">Relatório final ↗</a></div></article>').join("")||'<p class="muted">Nenhuma avaliação corresponde aos filtros selecionados.</p>';
+     el("list").innerHTML=found.map(a=>'<article class="card"><div class="card-head"><div><div class="eyebrow">Avaliação '+enc(a.codigo)+'</div><h3>'+enc(a.avaliado||"Avaliado a definir")+'</h3><p class="muted">'+enc(a.empresa||"Empresa não identificada no histórico")+'</p></div><div class="badges">'+tag(credit(a.credito),a.credito==="a_confirmar"?"warn":"")+tag(step(a.situacao),"neutral")+'</div></div><div class="actions"><a class="btn" href="'+route("status",a.codigo)+'">Ver status →</a><a class="btn secondary" href="'+route("formulario",a.codigo)+'">Formulário ↗</a><button type="button" class="btn secondary copy-message" data-code="'+enc(a.codigo)+'" aria-label="Copiar mensagem da avaliação de '+enc(a.avaliado)+'">Copiar formulário</button><button type="button" class="btn secondary copy-status" data-code="'+enc(a.codigo)+'" aria-label="Copiar mensagem de status da avaliação de '+enc(a.avaliado)+'">Copiar status</button><a class="btn secondary" href="'+route("final",a.codigo)+'">Relatório final ↗</a></div></article>').join("")||'<p class="muted">Nenhuma avaliação corresponde aos filtros selecionados.</p>';
    };
    el("list").addEventListener("click",async event=>{
-      const button=event.target.closest(".copy-message");
+      const button=event.target.closest(".copy-message, .copy-status");
       if(!button)return;
       const item=d.avaliacoes.find(a=>a.codigo===button.dataset.code);
       if(!item)return;
-      const message=messageFor(item);
+      const isStatus=button.classList.contains("copy-status");
+      const label=isStatus?"Copiar status":"Copiar formulário";
+      const message=isStatus?statusMessageFor(item):messageFor(item);
       try{
         await navigator.clipboard.writeText(message);
         button.textContent="Copiado!";
-        setTimeout(()=>{if(button.isConnected)button.textContent="Copiar mensagem"},2200);
+        setTimeout(()=>{if(button.isConnected)button.textContent=label},2200);
       }catch{
         const field=document.createElement("textarea");
         field.value=message;field.style.position="fixed";field.style.opacity="0";document.body.append(field);
@@ -42,7 +48,7 @@
         const ok=document.execCommand("copy");
         field.remove();
         button.textContent=ok?"Copiado!":"Não foi possível copiar";
-        setTimeout(()=>{if(button.isConnected)button.textContent="Copiar mensagem"},2500);
+        setTimeout(()=>{if(button.isConnected)button.textContent=label},2500);
       }
    });
    el("aplicar-filtros").addEventListener("click",renderList);
