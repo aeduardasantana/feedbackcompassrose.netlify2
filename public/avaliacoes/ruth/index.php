@@ -5,6 +5,13 @@ session_set_cookie_params(['httponly'=>true,'secure'=>true,'samesite'=>'Strict',
 session_start();
 header('Cache-Control: no-store, private');
 header('X-Content-Type-Options: nosniff');
+// Redireciona exclusivamente páginas de status para a rota pública, sem abrir acesso ao painel.
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'GET' && ($_GET['recurso'] ?? '') === 'status.html') {
+  $codigo=(string)($_GET['avaliacao'] ?? '');
+  if (!preg_match('/^[0-9]{3}$/', $codigo)) { http_response_code(404); exit; }
+  header('Location: ./status-publico.php?avaliacao='.rawurlencode($codigo), true, 302);
+  exit;
+}
 $config = __DIR__ . '/.senha-config.php';
 if (!is_file($config)) { http_response_code(503); exit('Acesso temporariamente indisponível.'); }
 $hash = require $config;
